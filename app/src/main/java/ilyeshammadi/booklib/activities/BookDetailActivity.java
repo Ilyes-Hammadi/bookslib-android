@@ -2,6 +2,7 @@ package ilyeshammadi.booklib.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -31,6 +32,7 @@ public class BookDetailActivity extends AppCompatActivity {
     private TextView mBookTitle;
     private TextView mBookDescription;
     private ImageView mBookThumbnail;
+    private String pdfUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +45,8 @@ public class BookDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl));
+                startActivity(intent);
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -96,6 +98,8 @@ public class BookDetailActivity extends AppCompatActivity {
             book.getThumbnail_urlL();
             Picasso.with(BookDetailActivity.this).load(book.getThumbnail_urlL()).into(mBookThumbnail);
             mBookDescription.setText(book.getDescription());
+
+            pdfUrl = book.getLinkToPdf();
 
         }
     }

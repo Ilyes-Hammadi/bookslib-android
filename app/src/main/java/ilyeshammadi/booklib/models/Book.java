@@ -24,6 +24,7 @@ public class Book {
     private String description;
     private String slug;
     private String thumbnail_url;
+    private String linkToPdf;
 
     private int commentsCount, likesCount;
 
@@ -51,6 +52,17 @@ public class Book {
         this.description = description;
         this.slug = slug;
         this.thumbnail_url = thumbnail_url;
+        this.commentsCount = commentsCount;
+        this.likesCount = likesCount;
+    }
+
+    public Book(int id, String name, String description, String slug, String thumbnail_url, String linkToPdf, int commentsCount, int likesCount) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.slug = slug;
+        this.thumbnail_url = thumbnail_url;
+        this.linkToPdf = linkToPdf;
         this.commentsCount = commentsCount;
         this.likesCount = likesCount;
     }
@@ -139,6 +151,14 @@ public class Book {
         this.id = id;
     }
 
+    public String getLinkToPdf() {
+        return linkToPdf;
+    }
+
+    public void setLinkToPdf(String linkToPdf) {
+        this.linkToPdf = linkToPdf;
+    }
+
     public static Book fromJson(JSONObject bookNode) {
         try {
 
@@ -158,11 +178,12 @@ public class Book {
             String name = bookNode.getString("name");
             String description = bookNode.getString("description");
             String thumbnail = bookNode.getString("get_thulbnail");
+            String linkToPdf = bookNode.getString("link_to_pdf");
 
             int commentsCount = bookNode.getInt("get_comments_count");
             int likesCount = bookNode.getInt("get_likes_count");
 
-            return new Book(id, name, description, slug, thumbnail, commentsCount, likesCount);
+            return new Book(id, name, description, slug, thumbnail, linkToPdf,commentsCount, likesCount);
 
 
 
