@@ -11,6 +11,7 @@ import java.util.List;
 
 import ilyeshammadi.booklib.R;
 import ilyeshammadi.booklib.adapters.ListBookAdapter;
+import ilyeshammadi.booklib.asyntasks.GetListBooksTask;
 import ilyeshammadi.booklib.models.Book;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,13 +33,15 @@ public class MainActivity extends AppCompatActivity {
         mListBooksRL.setLayoutManager(mLayoutManager);
         mListBooksRL.setItemAnimator(new DefaultItemAnimator());
 
-        mAdapter = new ListBookAdapter(mBooks);
+        mAdapter = new ListBookAdapter(this, mBooks);
         mListBooksRL.setAdapter(mAdapter);
-
-        prepareData();
-
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        new GetListBooksTask(mAdapter).execute();
+    }
 
     private void prepareData() {
         for (int i = 0; i < 10; i++) {

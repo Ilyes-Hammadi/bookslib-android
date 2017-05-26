@@ -1,5 +1,19 @@
 package ilyeshammadi.booklib.models;
 
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+import static ilyeshammadi.booklib.utils.Constants.TAG;
+
 /**
  * Created by ilyes on 5/26/17.
  */
@@ -49,4 +63,38 @@ public class Book {
     public void setThumbnail_url(String thumbnail_url) {
         this.thumbnail_url = thumbnail_url;
     }
+
+
+    public static Book fromJson(JSONObject bookNode) {
+        try {
+
+//            User user  = User.fromJSON((JSONObject) articleNode.getJSONObject("user"));
+//
+//            JSONArray commentsNode = articleNode.getJSONArray("comments");
+//
+//
+//            ArrayList<Comment> comments = new ArrayList<>();
+//
+//            for (int i = 0; i < commentsNode.length(); i++) {
+//                comments.add(Comment.fromJSON(commentsNode.getJSONObject(i)));
+//            }
+
+
+            String name = bookNode.getString("name");
+            String description = bookNode.getString("description");
+            String thumbnail = bookNode.getString("get_thulbnail");
+
+
+            return new Book(name, description, "Slug", thumbnail);
+
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        return null;
+    }
+
 }
