@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView
+    android:id="@+id/book_card_container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="4dp">
@@ -20,17 +22,17 @@
                 android:id="@+id/book_thumbnail_iv"
                 android:layout_width="90dp"
                 android:layout_height="140dp"
-                android:background="@color/cardview_dark_background"
-                android:layout_margin="8dp"/>
+                android:layout_margin="8dp"
+                android:background="@color/cardview_dark_background" />
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="8dp"
                 android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp">
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/name_tv"
@@ -38,14 +40,14 @@
                     android:layout_height="wrap_content"
                     android:text="Title"
                     android:textSize="22sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/author_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Author"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_marginBottom="8dp"
+                    android:text="Author" />
 
                 <TextView
                     android:id="@+id/description_tv"
@@ -61,10 +63,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginLeft="8dp">
+            android:layout_marginTop="16dp"
+            android:orientation="vertical">
 
             <View
                 android:layout_width="match_parent"
@@ -76,52 +78,52 @@
                 android:layout_height="wrap_content">
 
                 <ImageButton
+                    android:id="@+id/like_btn"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="#FFF"
-                    android:src="@drawable/ic_favorite_border_black_24dp"
-                    android:id="@+id/like_btn" />
+                    android:src="@drawable/ic_favorite_border_black_24dp" />
 
                 <TextView
                     android:id="@+id/likes_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="4"
                     android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/like_btn"
                     android:layout_toRightOf="@+id/like_btn"
-                    android:layout_toEndOf="@+id/like_btn" />
+                    android:text="4" />
 
 
                 <ImageButton
+                    android:id="@+id/comment_btn"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:background="#FFF"
-                    android:src="@drawable/ic_mode_comment_black_24dp"
-                    android:id="@+id/comment_btn"
                     android:layout_alignParentTop="true"
+                    android:layout_toEndOf="@+id/likes_tv"
                     android:layout_toRightOf="@+id/likes_tv"
-                    android:layout_toEndOf="@+id/likes_tv" />
+                    android:background="#FFF"
+                    android:src="@drawable/ic_mode_comment_black_24dp" />
 
 
                 <TextView
                     android:id="@+id/comment_counter_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="6"
                     android:layout_centerVertical="true"
+                    android:layout_toEndOf="@+id/comment_btn"
                     android:layout_toRightOf="@+id/comment_btn"
-                    android:layout_toEndOf="@+id/comment_btn" />
+                    android:text="6" />
 
 
                 <ImageButton
                     android:id="@+id/bookmark_btn"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:background="#FFF"
-                    android:src="@drawable/ic_bookmark_border_black_24dp"
-                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true" />
+                    android:layout_alignParentTop="true"
+                    android:background="#FFF"
+                    android:src="@drawable/ic_bookmark_border_black_24dp" />
 
             </RelativeLayout>
 

@@ -14,7 +14,7 @@ import ilyeshammadi.booklib.adapters.ListBookAdapter;
 import ilyeshammadi.booklib.asyntasks.GetListBooksTask;
 import ilyeshammadi.booklib.models.Book;
 
-public class MainActivity extends AppCompatActivity {
+public class ListBookActivity extends AppCompatActivity {
 
     List<Book> mBooks = new ArrayList<>();
     RecyclerView mListBooksRL;
@@ -35,19 +35,9 @@ public class MainActivity extends AppCompatActivity {
 
         mAdapter = new ListBookAdapter(this, mBooks);
         mListBooksRL.setAdapter(mAdapter);
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+        // Get data from server
         new GetListBooksTask(mAdapter).execute();
-    }
-
-    private void prepareData() {
-        for (int i = 0; i < 10; i++) {
-            Book book = new Book("Lolo", "Lolo", "Lolo", "htt://lolo.com");
-            mBooks.add(book);
-        }
     }
 
 }

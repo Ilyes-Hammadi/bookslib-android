@@ -19,6 +19,7 @@ import static ilyeshammadi.booklib.utils.Constants.TAG;
  */
 
 public class Book {
+    private int id;
     private String name;
     private String description;
     private String slug;
@@ -35,6 +36,16 @@ public class Book {
     }
 
     public Book(String name, String description, String slug, String thumbnail_url, int commentsCount, int likesCount) {
+        this.name = name;
+        this.description = description;
+        this.slug = slug;
+        this.thumbnail_url = thumbnail_url;
+        this.commentsCount = commentsCount;
+        this.likesCount = likesCount;
+    }
+
+    public Book(int id, String name, String description, String slug, String thumbnail_url, int commentsCount, int likesCount) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.slug = slug;
@@ -92,6 +103,14 @@ public class Book {
         this.likesCount = likesCount;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public static Book fromJson(JSONObject bookNode) {
         try {
 
@@ -106,7 +125,8 @@ public class Book {
 //                comments.add(Comment.fromJSON(commentsNode.getJSONObject(i)));
 //            }
 
-
+            int id = bookNode.getInt("id");
+            String slug = bookNode.getString("slug");
             String name = bookNode.getString("name");
             String description = bookNode.getString("description");
             String thumbnail = bookNode.getString("get_thulbnail");
@@ -114,7 +134,7 @@ public class Book {
             int commentsCount = bookNode.getInt("get_comments_count");
             int likesCount = bookNode.getInt("get_likes_count");
 
-            return new Book(name, description, "Slug", thumbnail, commentsCount, likesCount);
+            return new Book(id, name, description, slug, thumbnail, commentsCount, likesCount);
 
 
 

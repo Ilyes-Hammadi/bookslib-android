@@ -1,6 +1,8 @@
 package ilyeshammadi.booklib.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 
 /**
@@ -14,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -21,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ilyeshammadi.booklib.R;
+import ilyeshammadi.booklib.activities.BookDetailActivity;
 import ilyeshammadi.booklib.models.Book;
 
 import static ilyeshammadi.booklib.utils.Constants.TAG;
@@ -31,11 +35,13 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
     private Context context;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
+        public CardView cardContaier;
         public TextView name, description, commentCounter, likesCounter;
         public ImageView thumbnail;
 
         public MyViewHolder(View view) {
             super(view);
+            cardContaier = (CardView) view.findViewById(R.id.book_card_container);
             name = (TextView) view.findViewById(R.id.name_tv);
             description = (TextView) view.findViewById(R.id.description_tv);
             thumbnail = (ImageView) view.findViewById(R.id.book_thumbnail_iv);
@@ -59,8 +65,8 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        Book book = bookList.get(position);
+    public void onBindViewHolder(MyViewHolder holder, final int position) {
+        final Book book = bookList.get(position);
 
         // Set the book name
         holder.name.setText(book.getName());
@@ -83,6 +89,18 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
 
         // Set the comments counter
         holder.commentCounter.setText(book.getCommentsCount() + "");
+
+        // Click on a book to see it's detail
+        holder.cardContaier.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open Book detail activity with the book id in the extra
+                Intent intent = new Intent(context, BookDetailActivity.class);
+                intent.putExtra("book-id", book.getId());
+                context.startActivity(intent);
+            }
+        });
+
 
     }
 
