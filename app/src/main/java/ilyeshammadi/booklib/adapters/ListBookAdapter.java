@@ -31,7 +31,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
     private Context context;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, description;
+        public TextView name, description, commentCounter, likesCounter;
         public ImageView thumbnail;
 
         public MyViewHolder(View view) {
@@ -39,6 +39,8 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
             name = (TextView) view.findViewById(R.id.name_tv);
             description = (TextView) view.findViewById(R.id.description_tv);
             thumbnail = (ImageView) view.findViewById(R.id.book_thumbnail_iv);
+            commentCounter = (TextView) view.findViewById(R.id.comment_counter_tv);
+            likesCounter = (TextView) view.findViewById(R.id.likes_tv);
         }
     }
 
@@ -75,6 +77,12 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
 
         // Set the book thumbnail
         Picasso.with(context).load(book.getThumbnail_url()).into(holder.thumbnail);
+
+        // Set the likes counter
+        holder.likesCounter.setText(book.getLikesCount() + "");
+
+        // Set the comments counter
+        holder.commentCounter.setText(book.getCommentsCount() + "");
 
     }
 
