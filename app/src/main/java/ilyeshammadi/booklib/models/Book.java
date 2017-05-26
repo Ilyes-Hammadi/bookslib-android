@@ -27,6 +27,7 @@ public class Book {
 
     private int commentsCount, likesCount;
 
+    public Book() {}
 
     public Book(String name, String description, String slug, String thumbnail_url) {
         this.name = name;
@@ -86,6 +87,33 @@ public class Book {
         this.thumbnail_url = thumbnail_url;
     }
 
+    public String getThumbnail_urlL() {
+        String url = getThumbnail_url();
+        String chunks[] = url.split("\\.");
+
+        chunks[4] = "LZZZZZZZ";
+
+        url = "";
+
+        if (chunks.length > 0) {
+            StringBuilder nameBuilder = new StringBuilder();
+
+            for (String n : chunks) {
+                nameBuilder.append(n.replace("'", "\\'")).append(".");
+            }
+
+            nameBuilder.deleteCharAt(nameBuilder.length() - 1);
+
+            url =  nameBuilder.toString();
+        } else {
+            url =  "";
+        }
+
+
+        Log.i(TAG, "getThumbnail_urlL: " + url);
+
+        return url;
+    }
 
     public int getCommentsCount() {
         return commentsCount;

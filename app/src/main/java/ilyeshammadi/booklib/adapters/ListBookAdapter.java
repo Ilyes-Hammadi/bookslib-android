@@ -97,6 +97,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
                 // Open Book detail activity with the book id in the extra
                 Intent intent = new Intent(context, BookDetailActivity.class);
                 intent.putExtra("book-id", book.getId());
+                intent.putExtra("book-name", book.getName());
                 context.startActivity(intent);
             }
         });
