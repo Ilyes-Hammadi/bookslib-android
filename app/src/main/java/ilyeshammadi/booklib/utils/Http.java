@@ -47,6 +47,8 @@ public class Http {
 
         Http.context = context;
 
+
+
         String username = getPref(context, "username");
         String password = getPref(context, "password");
 

@@ -1,10 +1,12 @@
 package ilyeshammadi.booklib.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.view.menu.ExpandedMenuView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -29,6 +30,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +40,9 @@ import ilyeshammadi.booklib.R;
 import ilyeshammadi.booklib.adapters.ListBookAdapter;
 import ilyeshammadi.booklib.asyntasks.GetListBooksTask;
 import ilyeshammadi.booklib.models.Book;
+import ilyeshammadi.booklib.models.User;
 import ilyeshammadi.booklib.utils.Http;
+import ilyeshammadi.booklib.utils.Utils;
 
 import static ilyeshammadi.booklib.utils.Constants.SERVER_URL;
 import static ilyeshammadi.booklib.utils.Constants.TAG;
@@ -53,6 +58,8 @@ public class ListBookActivity extends AppCompatActivity {
     ArrayList<Book> mSearchbooks = new ArrayList<>();
 
     ArrayAdapter<String> mSearchAdapter;
+
+    private IProfile mProfile;
     private Drawer mDrawer;
 
     @Override
@@ -79,7 +86,7 @@ public class ListBookActivity extends AppCompatActivity {
         // Get data from server
         new GetListBooksTask(getApplicationContext(), mAdapter).execute();
 
-        setupDrawer();
+        setupLoggedinUserDrawer();
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,30 +147,19 @@ public class ListBookActivity extends AppCompatActivity {
 
     }
 
-    private void setupDrawer() {
-        // Create the AccountHeader
-        AccountHeader headerResult = new AccountHeaderBuilder()
-                .withHeaderBackground(R.drawable.black_background)
-                .withActivity(this)
-                .addProfiles(
-                        new ProfileDrawerItem().withName("Mike Penz").withEmail("mikepenz@gmail.com").withIcon("http://placehold.it/48x48")
-                )
-                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-                    @Override
-                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
-                        return false;
-                    }
-                })
-                .build();
-
+    private void setupLoggedinUserDrawer() {
         // Set Navigation Drawer
-        mDrawer  = new DrawerBuilder()
-                .withAccountHeader(headerResult)
-                .withActivity(this)
+        mDrawer = new DrawerBuilder()
+                .withActivity(ListBookActivity.this)
                 .build();
 
 
+        // Get username from shared pref
+        String username = Http.getPref(this, "username");
 
+        Log.i("USERNAME", "setupLoggedinUserDrawer: " + username);
+
+        new GetUserDataTask(this).execute(username);
     }
 
 
@@ -275,5 +271,89 @@ public class ListBookActivity extends AppCompatActivity {
         }
     }
 
+
+    public class GetUserDataTask extends AsyncTask<String, Void, User> {
+
+        private Context context;
+        Bitmap image;
+
+        public GetUserDataTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected User doInBackground(String... params) {
+
+
+            try {
+                // Get the username
+                String username = params[0];
+
+                Log.i("USERNAME", "doInBackground: " + username);
+
+                // Construc String
+                String url = SERVER_URL + "/api/users/" + username + '/';
+
+                Log.i("USERNAME", "doInBackground: " + url);
+
+                // Get data from server
+                String data = Http.get(context, url);
+
+                Log.i("USERNAME", "doInBackground: " + data);
+
+                // If there are no errors
+                if (Objects.equals(data, "ERROR")) {
+                    return new User("Error", "Error", "");
+                }
+
+                // Parse Json
+                JSONObject root = new JSONObject(data);
+
+                String userName = root.getString("username");
+                String email = root.getString("email");
+                String imageUrl = root.getString("image");
+
+
+                image = Utils.drawableFromUrl(imageUrl);
+
+                return new User(userName, email, imageUrl);
+
+
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
+            }
+
+
+            return new User();
+        }
+
+        @Override
+        protected void onPostExecute(User user) {
+
+
+            // Create the AccountHeader
+            AccountHeader headerResult = new AccountHeaderBuilder()
+                    .withHeaderBackground(R.drawable.black_background)
+                    .withActivity(ListBookActivity.this)
+                    .addProfiles(
+                            new ProfileDrawerItem().withName(user.getUsername()).withEmail(user.getEmail()).withIcon(image)
+                    )
+                    .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                        @Override
+                        public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                            return false;
+                        }
+                    })
+                    .build();
+
+            // Set Navigation Drawer
+            mDrawer = new DrawerBuilder()
+                    .withAccountHeader(headerResult)
+                    .withActivity(ListBookActivity.this)
+                    .build();
+
+
+        }
+    }
 
 }
