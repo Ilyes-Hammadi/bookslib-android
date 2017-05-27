@@ -2,6 +2,7 @@ package ilyeshammadi.booklib.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Icon;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 
@@ -14,6 +15,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +41,8 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
         public CardView cardContaier;
         public TextView name, description, commentCounter, likesCounter;
         public ImageView thumbnail;
+        public ImageButton likeBtn, bookmarkBtn;
+
 
         public MyViewHolder(View view) {
             super(view);
@@ -47,6 +52,9 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
             thumbnail = (ImageView) view.findViewById(R.id.book_thumbnail_iv);
             commentCounter = (TextView) view.findViewById(R.id.comment_counter_tv);
             likesCounter = (TextView) view.findViewById(R.id.likes_tv);
+
+            likeBtn = (ImageButton) view.findViewById(R.id.like_btn);
+            bookmarkBtn = (ImageButton) view.findViewById(R.id.bookmark_btn);
         }
     }
 
@@ -89,6 +97,17 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
 
         // Set the comments counter
         holder.commentCounter.setText(book.getCommentsCount() + "");
+
+        // If book liked
+        if(book.isLiked()) {
+            holder.likeBtn.setImageResource(R.drawable.ic_favorite_black_24dp);
+        }
+
+        // If book bookrmakrd
+        if(book.isBookmarked()) {
+            holder.bookmarkBtn.setImageResource(R.drawable.ic_bookmark_black_24dp);
+        }
+
 
         // Click on a book to see it's detail
         holder.cardContaier.setOnClickListener(new View.OnClickListener() {

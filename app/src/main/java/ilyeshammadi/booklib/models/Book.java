@@ -26,6 +26,9 @@ public class Book {
     private String thumbnail_url;
     private String linkToPdf;
 
+    private boolean isLiked;
+    private boolean isBookmarked;
+
     private int commentsCount, likesCount;
 
     public Book() {}
@@ -68,6 +71,19 @@ public class Book {
         this.slug = slug;
         this.thumbnail_url = thumbnail_url;
         this.linkToPdf = linkToPdf;
+        this.commentsCount = commentsCount;
+        this.likesCount = likesCount;
+    }
+
+    public Book(int id, String name, String description, String slug, String thumbnail_url, String linkToPdf,  int commentsCount, int likesCount, boolean isLiked, boolean isBookmarked) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.slug = slug;
+        this.thumbnail_url = thumbnail_url;
+        this.linkToPdf = linkToPdf;
+        this.isLiked = isLiked;
+        this.isBookmarked = isBookmarked;
         this.commentsCount = commentsCount;
         this.likesCount = likesCount;
     }
@@ -164,6 +180,22 @@ public class Book {
         this.linkToPdf = linkToPdf;
     }
 
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
+    }
+
+    public boolean isBookmarked() {
+        return isBookmarked;
+    }
+
+    public void setBookmarked(boolean bookmarked) {
+        isBookmarked = bookmarked;
+    }
+
     public static Book fromJson(JSONObject bookNode) {
         try {
 
@@ -188,7 +220,10 @@ public class Book {
             int commentsCount = bookNode.getInt("get_comments_count");
             int likesCount = bookNode.getInt("get_likes_count");
 
-            return new Book(id, name, description, slug, thumbnail, linkToPdf,commentsCount, likesCount);
+            boolean isLiked = bookNode.getBoolean("liked");
+            boolean isBookmarked = bookNode.getBoolean("bookmarked");
+
+            return new Book(id, name, description, slug, thumbnail, linkToPdf,commentsCount, likesCount, isLiked, isBookmarked);
 
 
 
