@@ -1,6 +1,7 @@
 package ilyeshammadi.booklib.activities;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -15,15 +16,25 @@ public class RouteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_route);
 
 
-        // If user is signed in go to list books
-        // Otherwise go to signing
-        if (Http.isUserLoggedIn(this)) {
-            startActivity(new Intent(this, ListBookActivity.class));
-            finish();
-        } else {
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
-        }
+        // This solution will leak memory!  Don't use!!!
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                // If user is signed in go to list books
+                // Otherwise go to signing
+                if (Http.isUserLoggedIn(RouteActivity.this)) {
+                    startActivity(new Intent(RouteActivity.this, ListBookActivity.class));
+                    finish();
+                } else {
+                    startActivity(new Intent(RouteActivity.this, LoginActivity.class));
+                    finish();
+                }
+
+            }
+        }, 2000);
+
 
     }
 }
