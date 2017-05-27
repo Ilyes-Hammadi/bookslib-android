@@ -2,7 +2,6 @@ package ilyeshammadi.booklib.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Icon;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 
@@ -15,11 +14,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -100,12 +97,14 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
         holder.commentCounter.setText(book.getCommentsCount() + "");
 
         // If book liked
-        if(book.isLiked()) {
+        if(book.getIsLiked()) {
+            Log.i(TAG, "onBindViewHolder: " + book.getIsLiked());
             holder.likeBtn.setImageResource(R.drawable.ic_favorite_black_24dp);
         }
 
         // If book bookrmakrd
-        if(book.isBookmarked()) {
+        if(book.getIsBookmarked()) {
+            Log.i(TAG, "onBindViewHolder: " + book.getIsBookmarked());
             holder.bookmarkBtn.setImageResource(R.drawable.ic_bookmark_black_24dp);
         }
 
@@ -126,7 +125,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
         holder.likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!book.isLiked()) {
+                if (!book.getIsLiked()) {
                     holder.likeBtn.setImageResource(R.drawable.ic_favorite_black_24dp);
                     new LikeBookTask(context, holder.likeBtn, holder.likesCounter, book).execute(book.getId());
                 }

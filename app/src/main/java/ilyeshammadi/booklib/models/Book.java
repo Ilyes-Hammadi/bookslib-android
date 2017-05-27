@@ -26,8 +26,8 @@ public class Book {
     private String thumbnail_url;
     private String linkToPdf;
 
-    private boolean isLiked;
-    private boolean isBookmarked;
+    private boolean isLiked = false;
+    private boolean isBookmarked = false;
 
     private int commentsCount, likesCount;
 
@@ -82,10 +82,11 @@ public class Book {
         this.slug = slug;
         this.thumbnail_url = thumbnail_url;
         this.linkToPdf = linkToPdf;
-        this.isLiked = isLiked;
-        this.isBookmarked = isBookmarked;
         this.commentsCount = commentsCount;
         this.likesCount = likesCount;
+
+        this.isLiked = isLiked;
+        this.isBookmarked = isBookmarked;
     }
 
     public String getName() {
@@ -180,7 +181,7 @@ public class Book {
         this.linkToPdf = linkToPdf;
     }
 
-    public boolean isLiked() {
+    public boolean getIsLiked() {
         return isLiked;
     }
 
@@ -188,7 +189,7 @@ public class Book {
         isLiked = liked;
     }
 
-    public boolean isBookmarked() {
+    public boolean getIsBookmarked() {
         return isBookmarked;
     }
 
@@ -223,10 +224,17 @@ public class Book {
             boolean isLiked = bookNode.getBoolean("liked");
             boolean isBookmarked = bookNode.getBoolean("bookmarked");
 
-            return new Book(id, name, description, slug, thumbnail, linkToPdf,commentsCount, likesCount, isLiked, isBookmarked);
+            Log.i(TAG, "fromJson: isLiked: " + isLiked);
+            Log.i(TAG, "fromJson: isBookmarked: " + isBookmarked);
 
 
+            Book book = new Book(id, name, description, slug, thumbnail, linkToPdf,commentsCount, likesCount, isLiked, isBookmarked);
 
+            Log.i(TAG, "fromJson: get isLiked: " + book.getIsLiked());
+            Log.i(TAG, "fromJson: get isBookmarked: " + book.getIsBookmarked());
+
+
+            return book;
         } catch (JSONException e) {
             e.printStackTrace();
         }
