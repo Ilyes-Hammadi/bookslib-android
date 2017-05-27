@@ -37,6 +37,7 @@ public class BookDetailActivity extends AppCompatActivity {
     private TextView mBookDescription;
     private ImageView mBookThumbnail;
     private String pdfUrl;
+    private Book mBook;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +80,13 @@ public class BookDetailActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(@IdRes int tabId) {
                 if (tabId == R.id.tab_share) {
-                    // The tab with id R.id.tab_favorites was selected,
-                    // change your content accordingly.
+                    if (mBook != null) {
+                        Intent i = new Intent(Intent.ACTION_SEND);
+                        i.setType("text/plain");
+                        i.putExtra(Intent.EXTRA_SUBJECT, mBook.getName());
+                        i.putExtra(Intent.EXTRA_TEXT, SERVER_URL + "/books/detail/" + mBook.getSlug());
+                        startActivity(Intent.createChooser(i, "Share Book"));
+                    }
                 }
             }
         });
@@ -113,6 +119,8 @@ public class BookDetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Book book) {
+            mBook = book;
+
             // Set data into the views
             book.getThumbnail_urlL();
             Picasso.with(BookDetailActivity.this).load(book.getThumbnail_urlL()).into(mBookThumbnail);
