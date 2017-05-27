@@ -25,6 +25,7 @@ import java.util.List;
 
 import ilyeshammadi.booklib.R;
 import ilyeshammadi.booklib.activities.BookDetailActivity;
+import ilyeshammadi.booklib.asyntasks.BookmarkBookTask;
 import ilyeshammadi.booklib.asyntasks.LikeBookTask;
 import ilyeshammadi.booklib.models.Book;
 
@@ -131,6 +132,18 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
                 }
             }
         });
+
+        // On bookmark click
+        holder.bookmarkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!book.getIsBookmarked()) {
+                    holder.bookmarkBtn.setImageResource(R.drawable.ic_bookmark_black_24dp);
+                    new BookmarkBookTask(context, holder.bookmarkBtn).execute(book.getId());
+                }
+            }
+        });
+
     }
 
     @Override
