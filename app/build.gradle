@@ -34,5 +34,8 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.4.0'
     compile 'com.squareup.picasso:picasso:2.4.0'
+    compile('com.mikepenz:materialdrawer:5.9.1@aar') {
+        transitive = true
+    }
     testCompile 'junit:junit:4.12'
 }

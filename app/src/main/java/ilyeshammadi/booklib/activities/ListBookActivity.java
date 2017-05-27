@@ -18,6 +18,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,6 +53,7 @@ public class ListBookActivity extends AppCompatActivity {
     ArrayList<Book> mSearchbooks = new ArrayList<>();
 
     ArrayAdapter<String> mSearchAdapter;
+    private Drawer mDrawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +62,10 @@ public class ListBookActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
+
+        //getSupportActionBar().setLogo(R.drawable.ic_menu_black_24dp);
 
         // Get the views
         mListBooksRL = (RecyclerView) findViewById(R.id.list_books);
@@ -68,6 +79,14 @@ public class ListBookActivity extends AppCompatActivity {
         // Get data from server
         new GetListBooksTask(getApplicationContext(), mAdapter).execute();
 
+        setupDrawer();
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawer.openDrawer();
+            }
+        });
 
         // Search view
         mSearchView = (MaterialSearchView) findViewById(R.id.search_view);
@@ -118,6 +137,32 @@ public class ListBookActivity extends AppCompatActivity {
                 mSearchView.setQuery((String) mSearchAdapter.getItem(position), false);
             }
         });
+
+    }
+
+    private void setupDrawer() {
+        // Create the AccountHeader
+        AccountHeader headerResult = new AccountHeaderBuilder()
+                .withHeaderBackground(R.drawable.black_background)
+                .withActivity(this)
+                .addProfiles(
+                        new ProfileDrawerItem().withName("Mike Penz").withEmail("mikepenz@gmail.com").withIcon("http://placehold.it/48x48")
+                )
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                        return false;
+                    }
+                })
+                .build();
+
+        // Set Navigation Drawer
+        mDrawer  = new DrawerBuilder()
+                .withAccountHeader(headerResult)
+                .withActivity(this)
+                .build();
+
+
 
     }
 
