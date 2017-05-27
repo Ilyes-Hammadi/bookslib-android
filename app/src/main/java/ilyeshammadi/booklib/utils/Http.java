@@ -42,7 +42,7 @@ public class Http {
 
         Http.context = context;
 
-        
+
         String token = requestToken("ilyes", "cosplay222");
 
         StringBuilder sb = new StringBuilder();
@@ -127,6 +127,15 @@ public class Http {
         return false;
     }
 
+
+    public static boolean signin(String username, String password) {
+        String token = requestToken(username, password);
+        if (!Objects.equals(token, "ERROR")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     static String requestToken(String username, String password) {
 

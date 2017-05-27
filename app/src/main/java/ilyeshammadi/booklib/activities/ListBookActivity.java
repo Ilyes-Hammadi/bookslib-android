@@ -141,6 +141,7 @@ public class ListBookActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(ListBookActivity.this, LoginActivity.class));
             return true;
         }
 
