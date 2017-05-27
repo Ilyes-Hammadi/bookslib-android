@@ -47,8 +47,10 @@ public class Http {
 
         Http.context = context;
 
+        String username = getPref(context, "username");
+        String password = getPref(context, "password");
 
-        String token = requestToken(context,"ilyes", "cosplay222");
+        String token = requestToken(context, username, password);
 
         StringBuilder sb = new StringBuilder();
         String jwtToken = sb.append("JWT").append(" ").append(token).toString();
@@ -139,6 +141,8 @@ public class Http {
 //            context.startActivity(new Intent(context, LoginActivity.class));
 //            return "ERROR";
 //        }
+
+
 
 
         try {

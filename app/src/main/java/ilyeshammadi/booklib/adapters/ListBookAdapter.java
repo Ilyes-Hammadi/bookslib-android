@@ -28,6 +28,7 @@ import java.util.List;
 
 import ilyeshammadi.booklib.R;
 import ilyeshammadi.booklib.activities.BookDetailActivity;
+import ilyeshammadi.booklib.asyntasks.LikeBookTask;
 import ilyeshammadi.booklib.models.Book;
 
 import static ilyeshammadi.booklib.utils.Constants.TAG;
@@ -73,7 +74,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, final int position) {
+    public void onBindViewHolder(final MyViewHolder holder, final int position) {
         final Book book = bookList.get(position);
 
         // Set the book name
@@ -121,7 +122,16 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
             }
         });
 
-
+        // On like btn click
+        holder.likeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!book.isLiked()) {
+                    holder.likeBtn.setImageResource(R.drawable.ic_favorite_black_24dp);
+                    new LikeBookTask(context, holder.likeBtn, holder.likesCounter, book).execute(book.getId());
+                }
+            }
+        });
     }
 
     @Override
