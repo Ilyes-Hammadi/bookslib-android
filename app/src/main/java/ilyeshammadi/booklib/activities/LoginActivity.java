@@ -3,6 +3,7 @@ package ilyeshammadi.booklib.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -330,7 +331,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //            return true;
 
 
-            return Http.signin(mEmail, mPassword);
+            return Http.login(getApplicationContext(),mEmail, mPassword);
 
 
 
@@ -342,6 +343,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
+                startActivity(new Intent(LoginActivity.this, ListBookActivity.class));
                 finish();
             } else {
                 mPasswordView.setError("User infomrations error");

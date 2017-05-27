@@ -66,7 +66,7 @@ public class ListBookActivity extends AppCompatActivity {
         mListBooksRL.setAdapter(mAdapter);
 
         // Get data from server
-        new GetListBooksTask(getApplicationContext(),mAdapter).execute();
+        new GetListBooksTask(getApplicationContext(), mAdapter).execute();
 
 
         // Search view
@@ -141,6 +141,9 @@ public class ListBookActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        } else if (id == R.id.action_logout) {
+            Http.logout();
             startActivity(new Intent(ListBookActivity.this, LoginActivity.class));
             return true;
         }
@@ -170,12 +173,12 @@ public class ListBookActivity extends AppCompatActivity {
         protected ArrayList<String> doInBackground(String... params) {
             String searchTerm = params[0];
 
-            if(searchTerm.isEmpty()) {
+            if (searchTerm.isEmpty()) {
                 Log.i(TAG, "doInBackground: Empty");
                 return new ArrayList<>();
             }
 
-            String data = Http.get(getApplicationContext(),SERVER_URL + "/api/search/?search=" + searchTerm);
+            String data = Http.get(getApplicationContext(), SERVER_URL + "/api/search/?search=" + searchTerm);
             ArrayList<String> booksNameList = new ArrayList<>();
 
             try {
@@ -196,8 +199,6 @@ public class ListBookActivity extends AppCompatActivity {
                     mSearchbooks.add(new Book(id, name));
 
                 }
-
-
 
 
                 return booksNameList;

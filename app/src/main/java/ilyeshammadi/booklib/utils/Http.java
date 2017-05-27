@@ -1,6 +1,7 @@
 package ilyeshammadi.booklib.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
@@ -27,6 +28,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
 
+import ilyeshammadi.booklib.activities.LoginActivity;
+
 import static ilyeshammadi.booklib.utils.Constants.SERVER_URL;
 import static ilyeshammadi.booklib.utils.Constants.TAG;
 
@@ -43,7 +46,7 @@ public class Http {
         Http.context = context;
 
 
-        String token = requestToken("ilyes", "cosplay222");
+        String token = requestToken(context,"ilyes", "cosplay222");
 
         StringBuilder sb = new StringBuilder();
         String jwtToken = sb.append("JWT").append(" ").append(token).toString();
@@ -128,16 +131,12 @@ public class Http {
     }
 
 
-    public static boolean signin(String username, String password) {
-        String token = requestToken(username, password);
-        if (!Objects.equals(token, "ERROR")) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    static String requestToken(Context context,String username, String password) {
 
-    static String requestToken(String username, String password) {
+//        if (!isUserLoggedIn()) {
+//            context.startActivity(new Intent(context, LoginActivity.class));
+//            return "ERROR";
+//        }
 
 
         try {
@@ -155,7 +154,7 @@ public class Http {
                 String token = resNode.getString("token");
 
                 // Save token in shared pref
-                setPref(Http.context, "token", token);
+                setPref(context, "token", token);
 
                 return token;
             } else {
@@ -186,8 +185,35 @@ public class Http {
         return sharedPref.getString(key, "");
     }
 
-    private static String getToken() {
-        return get(Http.context, "token");
+
+    public static boolean login(Context context,String username, String password) {
+        String token = requestToken(context,username, password);
+        if (!Objects.equals(token, "ERROR")) {
+
+            // save username and password in shared pref
+            setPref(context, "username", username);
+            setPref(context, "password", password);
+
+            return true;
+        } else {
+            return false;
+        }
     }
+
+    public static void logout() {
+        SharedPreferences sharedPref = context.getSharedPreferences("app", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.remove("username");
+        editor.remove("password");
+        editor.commit();
+    }
+
+    public static boolean isUserLoggedIn(Context context) {
+        SharedPreferences sharedPref = context.getSharedPreferences("app", Context.MODE_PRIVATE);
+        boolean isLoggedin =  sharedPref.contains("username") || sharedPref.contains("password");
+        Log.i(TAG, "isUserLoggedIn: " + isLoggedin);
+        return isLoggedin;
+    }
+
 
 }
