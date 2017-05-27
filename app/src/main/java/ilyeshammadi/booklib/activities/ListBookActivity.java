@@ -23,7 +23,10 @@ import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import org.json.JSONArray;
@@ -184,8 +187,7 @@ public class ListBookActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_logout) {
-            Http.logout();
-            startActivity(new Intent(ListBookActivity.this, LoginActivity.class));
+            Http.logout(getApplicationContext());
             return true;
         }
 
@@ -350,6 +352,20 @@ public class ListBookActivity extends AppCompatActivity {
             mDrawer = new DrawerBuilder()
                     .withAccountHeader(headerResult)
                     .withActivity(ListBookActivity.this)
+                    .addDrawerItems(
+                            new DividerDrawerItem(),
+                            new SecondaryDrawerItem().withIdentifier(1).withName("Logout").withIcon(R.drawable.ic_logout)
+                    )
+                    .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                        @Override
+                        public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                            if (drawerItem.getIdentifier() == 1) {
+                                Http.logout(getApplicationContext());
+                                return true;
+                            }
+                            return false;
+                        }
+                    })
                     .build();
 
 

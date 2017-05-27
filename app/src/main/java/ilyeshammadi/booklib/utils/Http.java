@@ -30,6 +30,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
 
+import ilyeshammadi.booklib.activities.ListBookActivity;
 import ilyeshammadi.booklib.activities.LoginActivity;
 
 import static ilyeshammadi.booklib.utils.Constants.SERVER_URL;
@@ -208,12 +209,16 @@ public class Http {
         }
     }
 
-    public static void logout() {
+    public static void logout(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences("app", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.remove("username");
         editor.remove("password");
         editor.commit();
+
+        // Go to login activity
+        context.startActivity(new Intent(context, LoginActivity.class));
+
     }
 
     public static boolean isUserLoggedIn(Context context) {
