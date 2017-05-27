@@ -1,7 +1,10 @@
 package ilyeshammadi.booklib.activities;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.menu.ExpandedMenuView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,19 +12,28 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-import com.miguelcatalan.materialsearchview.SearchAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import ilyeshammadi.booklib.R;
 import ilyeshammadi.booklib.adapters.ListBookAdapter;
 import ilyeshammadi.booklib.asyntasks.GetListBooksTask;
 import ilyeshammadi.booklib.models.Book;
+import ilyeshammadi.booklib.utils.Http;
 
+import static ilyeshammadi.booklib.utils.Constants.SERVER_URL;
 import static ilyeshammadi.booklib.utils.Constants.TAG;
 
 public class ListBookActivity extends AppCompatActivity {
@@ -30,6 +42,11 @@ public class ListBookActivity extends AppCompatActivity {
     RecyclerView mListBooksRL;
     ListBookAdapter mAdapter;
     MaterialSearchView mSearchView;
+
+    String[] mSearchResults = new String[]{};
+    ArrayList<Book> mSearchbooks = new ArrayList<>();
+
+    ArrayAdapter<String> mSearchAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,19 +71,30 @@ public class ListBookActivity extends AppCompatActivity {
 
         // Search view
         mSearchView = (MaterialSearchView) findViewById(R.id.search_view);
+        mSearchAdapter = new ArrayAdapter<>(this, R.layout.search_list_item, mSearchResults);
+
 
         mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //Do some magic
+                if (mSearchResults != null) {
+                    for (int i = 0; i < mSearchResults.length; i++) {
+                        if (Objects.equals(query, mSearchResults[i])) {
+                            Intent intent = new Intent(ListBookActivity.this, BookDetailActivity.class);
+                            intent.putExtra("book-id", mSearchbooks.get(i).getId());
+                            intent.putExtra("book-name", mSearchbooks.get(i).getName());
+                            startActivity(intent);
+                        }
+                    }
+                }
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 //Do some magic
-                String strings[] = new String[]{"Hello", "Hallo", "Haaa", "Heeeoo"};
-                mSearchView.setSuggestions(strings);
+                new SearchTask().execute(newText);
                 return true;
             }
         });
@@ -75,11 +103,19 @@ public class ListBookActivity extends AppCompatActivity {
             @Override
             public void onSearchViewShown() {
                 //Do some magic
+                mSearchView.setAdapter(mSearchAdapter);
             }
 
             @Override
             public void onSearchViewClosed() {
                 //Do some magic
+            }
+        });
+
+        mSearchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mSearchView.setQuery((String) mSearchAdapter.getItem(position), false);
             }
         });
 
@@ -120,4 +156,77 @@ public class ListBookActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
+
+    public class SearchTask extends AsyncTask<String, Void, ArrayList<String>> {
+
+        @Override
+        protected void onPreExecute() {
+            mSearchbooks = new ArrayList<>();
+        }
+
+        @Override
+        protected ArrayList<String> doInBackground(String... params) {
+            String searchTerm = params[0];
+
+            if(searchTerm.isEmpty()) {
+                Log.i(TAG, "doInBackground: Empty");
+                return new ArrayList<>();
+            }
+
+            String data = Http.get(SERVER_URL + "/api/search/?search=" + searchTerm);
+            ArrayList<String> booksNameList = new ArrayList<>();
+
+            try {
+
+                JSONObject rootNode = new JSONObject(data);
+
+                JSONArray results = rootNode.getJSONArray("results");
+
+                for (int i = 0; i < results.length(); i++) {
+                    JSONObject book = results.getJSONObject(i);
+
+                    // Copy the name in the sugeestion array
+                    booksNameList.add(book.getString("name"));
+
+                    int id = book.getInt("id");
+                    String name = book.getString("name");
+
+                    mSearchbooks.add(new Book(id, name));
+
+                }
+
+
+
+
+                return booksNameList;
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> stringArr) {
+
+            String[] booksNameArr = new String[stringArr.size()];
+            booksNameArr = stringArr.toArray(booksNameArr);
+
+            mSearchResults = booksNameArr;
+
+            mSearchAdapter.clear();
+            mSearchAdapter.addAll(mSearchResults);
+            mSearchAdapter.notifyDataSetChanged();
+
+            for (int i = 0; i < mSearchbooks.size(); i++) {
+                Log.i(TAG, "onPostExecute: " + mSearchbooks.get(i).getName());
+            }
+
+        }
+    }
+
+
 }
