@@ -78,7 +78,7 @@ public class BookDetailActivity extends AppCompatActivity {
         protected Book doInBackground(Integer... params) {
 
             int bookId = params[0];
-            String data = Http.get(SERVER_URL + "/api/books/" + bookId);
+            String data = Http.get(getApplicationContext(),SERVER_URL + "/api/books/" + bookId);
 
             try {
                 JSONObject bookNode = new JSONObject(data);

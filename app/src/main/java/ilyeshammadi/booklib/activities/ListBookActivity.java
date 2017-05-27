@@ -66,7 +66,7 @@ public class ListBookActivity extends AppCompatActivity {
         mListBooksRL.setAdapter(mAdapter);
 
         // Get data from server
-        new GetListBooksTask(mAdapter).execute();
+        new GetListBooksTask(getApplicationContext(),mAdapter).execute();
 
 
         // Search view
@@ -174,7 +174,7 @@ public class ListBookActivity extends AppCompatActivity {
                 return new ArrayList<>();
             }
 
-            String data = Http.get(SERVER_URL + "/api/search/?search=" + searchTerm);
+            String data = Http.get(getApplicationContext(),SERVER_URL + "/api/search/?search=" + searchTerm);
             ArrayList<String> booksNameList = new ArrayList<>();
 
             try {

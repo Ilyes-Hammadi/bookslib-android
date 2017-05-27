@@ -1,5 +1,6 @@
 package ilyeshammadi.booklib.asyntasks;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -24,15 +25,17 @@ import static ilyeshammadi.booklib.utils.Constants.TAG;
 public class GetListBooksTask extends AsyncTask<String, Void, ArrayList<Book>> {
 
     private ListBookAdapter adapter;
+    private Context context;
     private ArrayList<Book> booksList = new ArrayList<>();
 
-    public GetListBooksTask(ListBookAdapter adapter) {
+    public GetListBooksTask(Context context, ListBookAdapter adapter) {
         this.adapter = adapter;
+        this.context = context;
     }
 
     @Override
     protected ArrayList<Book> doInBackground(String... params) {
-        String data = Http.get(SERVER_URL + "/api/books/?format=json");
+        String data = Http.get(this.context, SERVER_URL + "/api/books/?format=json");
         Log.i(TAG, "doInBackground: " + data);
 
 
@@ -45,7 +48,7 @@ public class GetListBooksTask extends AsyncTask<String, Void, ArrayList<Book>> {
 
             Book book = null;
 
-            for (int i = 0; i < results.length() ; i++) {
+            for (int i = 0; i < results.length(); i++) {
                 JSONObject bookNode = (JSONObject) results.get(i);
                 book = Book.fromJson(bookNode);
                 booksList.add(book);
