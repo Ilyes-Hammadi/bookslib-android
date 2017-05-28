@@ -28,6 +28,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Objects;
 
 import ilyeshammadi.booklib.activities.ListBookActivity;
@@ -47,8 +48,6 @@ public class Http {
     public static String get(Context context, String u) {
 
         Http.context = context;
-
-
 
         String username = getPref(context, "username");
         String password = getPref(context, "password");
@@ -240,5 +239,53 @@ public class Http {
         return activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
     }
+
+
+    public static String addComment(Context context, Integer book_id, String commentText) {
+
+        Http.context = context;
+
+        String username = getPref(context, "username");
+        String password = getPref(context, "password");
+
+        String token = requestToken(context, username, password);
+
+        StringBuilder sb = new StringBuilder();
+        String jwtToken = sb.append("JWT").append(" ").append(token).toString();
+
+
+        String API_URL = null;
+        URL url = null;
+
+        try {
+            API_URL = SERVER_URL + "/api/book/comment/?book_id=" + book_id + "&username=" + username + "&comment_content=" + URLEncoder.encode(commentText, "utf-8");
+            Log.i(TAG, "addComment: " + API_URL);
+
+
+            url = new URL(API_URL);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestProperty("Authorization", jwtToken);
+
+
+            InputStream stream = new BufferedInputStream(urlConnection.getInputStream());
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
+            StringBuilder builder = new StringBuilder();
+
+            String inputString;
+            while ((inputString = bufferedReader.readLine()) != null) {
+                builder.append(inputString);
+            }
+            urlConnection.disconnect();
+
+            return builder.toString();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "ERROR";
+
+    }
+
 
 }

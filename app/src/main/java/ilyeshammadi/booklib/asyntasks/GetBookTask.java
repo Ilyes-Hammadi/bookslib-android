@@ -52,7 +52,6 @@ public class GetBookTask extends AsyncTask<Integer, Void, ArrayList<Comment>> {
 
             Log.i(TAG, "doInBackground: " + book.getComments().size());
 
-
             return book.getComments();
 
         } catch (JSONException e) {

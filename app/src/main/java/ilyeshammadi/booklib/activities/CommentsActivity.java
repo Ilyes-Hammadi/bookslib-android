@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import ilyeshammadi.booklib.R;
 import ilyeshammadi.booklib.adapters.CommentAdapter;
 import ilyeshammadi.booklib.asyntasks.GetBookTask;
+import ilyeshammadi.booklib.asyntasks.SendCommentTask;
 import ilyeshammadi.booklib.models.Comment;
 import ilyeshammadi.booklib.models.User;
 
@@ -57,6 +58,25 @@ public class CommentsActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
+
+        // On click send comment btn
+        sendCommentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get the comment from the input
+                String commentText = String.valueOf(addCommentET.getText());
+
+                // Clean the input
+                addCommentET.setText("");
+
+                // Send the comment to the server
+                new SendCommentTask(getApplicationContext()).execute(String.valueOf(id), commentText);
+
+                // Get the article data from the server
+                new GetBookTask(getApplicationContext(), adapter).execute(id);
+
+            }
+        });
 
     }
 
