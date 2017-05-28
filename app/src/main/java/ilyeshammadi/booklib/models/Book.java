@@ -25,11 +25,12 @@ public class Book {
     private String slug;
     private String thumbnail_url;
     private String linkToPdf;
+    private int commentsCount, likesCount;
 
     private boolean isLiked = false;
     private boolean isBookmarked = false;
 
-    private int commentsCount, likesCount;
+    private ArrayList<Comment> comments = new ArrayList<>();
 
     public Book() {}
 
@@ -87,6 +88,20 @@ public class Book {
 
         this.isLiked = isLiked;
         this.isBookmarked = isBookmarked;
+    }
+
+    public Book(int id, String name, String description, String slug, String thumbnail_url, String linkToPdf, int commentsCount, int likesCount, boolean isLiked, boolean isBookmarked, ArrayList<Comment> comments) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.slug = slug;
+        this.thumbnail_url = thumbnail_url;
+        this.linkToPdf = linkToPdf;
+        this.commentsCount = commentsCount;
+        this.likesCount = likesCount;
+        this.isLiked = isLiked;
+        this.isBookmarked = isBookmarked;
+        this.comments = comments;
     }
 
     public String getName() {
@@ -197,19 +212,29 @@ public class Book {
         isBookmarked = bookmarked;
     }
 
+
+    public ArrayList<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
+    }
+
     public static Book fromJson(JSONObject bookNode) {
         try {
 
 //            User user  = User.fromJSON((JSONObject) articleNode.getJSONObject("user"));
-//
-//            JSONArray commentsNode = articleNode.getJSONArray("comments");
-//
-//
-//            ArrayList<Comment> comments = new ArrayList<>();
-//
-//            for (int i = 0; i < commentsNode.length(); i++) {
-//                comments.add(Comment.fromJSON(commentsNode.getJSONObject(i)));
-//            }
+
+            JSONArray commentsNode = bookNode.getJSONArray("comments");
+
+            Log.i(TAG, "fromJson: Comments " + commentsNode);
+
+            ArrayList<Comment> comments = new ArrayList<>();
+
+            for (int i = 0; i < commentsNode.length(); i++) {
+                comments.add(Comment.fromJSON(commentsNode.getJSONObject(i)));
+            }
 
             int id = bookNode.getInt("id");
             String slug = bookNode.getString("slug");
@@ -228,7 +253,7 @@ public class Book {
             Log.i(TAG, "fromJson: isBookmarked: " + isBookmarked);
 
 
-            Book book = new Book(id, name, description, slug, thumbnail, linkToPdf,commentsCount, likesCount, isLiked, isBookmarked);
+            Book book = new Book(id, name, description, slug, thumbnail, linkToPdf,commentsCount, likesCount, isLiked, isBookmarked, comments);
 
             Log.i(TAG, "fromJson: get isLiked: " + book.getIsLiked());
             Log.i(TAG, "fromJson: get isBookmarked: " + book.getIsBookmarked());

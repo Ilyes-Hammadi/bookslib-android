@@ -50,7 +50,7 @@ public class BookDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl));
                 startActivity(intent);
             }
         });
@@ -65,7 +65,7 @@ public class BookDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         // Extract the book id
-        int id = intent.getIntExtra("book-id", 1);
+        final int id = intent.getIntExtra("book-id", 1);
         String bookName = intent.getStringExtra("book-name");
 
         mActionBar.setTitle(bookName);
@@ -87,10 +87,14 @@ public class BookDetailActivity extends AppCompatActivity {
                         i.putExtra(Intent.EXTRA_TEXT, SERVER_URL + "/books/detail/" + mBook.getSlug());
                         startActivity(Intent.createChooser(i, "Share Book"));
                     }
+                } else if (tabId == R.id.tab_comment) {
+                    Intent intent = new Intent(getApplicationContext(), CommentsActivity.class);
+                    intent.putExtra("book-id", id);
+                    startActivity(intent);
                 }
+
             }
         });
-
 
 
     }
@@ -103,7 +107,7 @@ public class BookDetailActivity extends AppCompatActivity {
         protected Book doInBackground(Integer... params) {
 
             int bookId = params[0];
-            String data = Http.get(getApplicationContext(),SERVER_URL + "/api/books/" + bookId);
+            String data = Http.get(getApplicationContext(), SERVER_URL + "/api/books/" + bookId);
 
             try {
                 JSONObject bookNode = new JSONObject(data);
@@ -130,7 +134,6 @@ public class BookDetailActivity extends AppCompatActivity {
 
         }
     }
-
 
 
 }
