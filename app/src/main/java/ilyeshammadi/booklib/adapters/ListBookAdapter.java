@@ -152,7 +152,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
     }
 
     public void swap(ArrayList<Book> datas) {
-        bookList.clear();
+        //bookList.clear();
         bookList.addAll(datas);
         notifyDataSetChanged();
     }

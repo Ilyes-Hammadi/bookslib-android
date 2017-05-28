@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="ilyeshammadi.booklib.activities.BookDetailActivity"
-    tools:showIn="@layout/activity_book_detail">
+    tools:showIn="@layout/activity_book_detail"
+    android:layout_marginTop="16dp">
 
     <TextView
         android:id="@+id/book_description_tv"

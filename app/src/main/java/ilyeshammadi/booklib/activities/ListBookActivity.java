@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -65,6 +66,9 @@ public class ListBookActivity extends AppCompatActivity {
     private IProfile mProfile;
     private Drawer mDrawer;
 
+    Boolean loading = false;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,12 +83,48 @@ public class ListBookActivity extends AppCompatActivity {
 
         // Get the views
         mListBooksRL = (RecyclerView) findViewById(R.id.list_books);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         mListBooksRL.setLayoutManager(mLayoutManager);
         mListBooksRL.setItemAnimator(new DefaultItemAnimator());
 
         mAdapter = new ListBookAdapter(this, mBooks);
         mListBooksRL.setAdapter(mAdapter);
+
+
+
+
+        mListBooksRL.addOnScrollListener(new RecyclerView.OnScrollListener()
+        {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+
+
+                if(dy > 0) {
+                    visibleItemCount = mLayoutManager.getChildCount();
+                    totalItemCount = mLayoutManager.getItemCount();
+                    pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
+
+
+                    if (!loading) {
+                        if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                            Log.v("...", "Last Item Wow !");
+                            //Do pagination.. i.e. fetch new data
+                            Toast.makeText(ListBookActivity.this, "New Data is Loading", Toast.LENGTH_SHORT).show();
+
+                            // Get the next page link
+                            String nextLink = Http.getPref(getApplicationContext(), "next");
+
+                            if (nextLink != null) {
+                                // Get data from server
+                                new GetListBooksTask(getApplicationContext(), mAdapter, loading).execute(nextLink);
+                            }
+
+                        }
+                    }
+                }
+            }
+        });
 
         // Get data from server
         new GetListBooksTask(getApplicationContext(), mAdapter).execute();

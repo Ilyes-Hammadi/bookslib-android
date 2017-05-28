@@ -27,15 +27,32 @@ public class GetListBooksTask extends AsyncTask<String, Void, ArrayList<Book>> {
     private ListBookAdapter adapter;
     private Context context;
     private ArrayList<Book> booksList = new ArrayList<>();
+    private Boolean loading = true;
 
     public GetListBooksTask(Context context, ListBookAdapter adapter) {
         this.adapter = adapter;
         this.context = context;
     }
 
+    public GetListBooksTask( Context context, ListBookAdapter adapter, boolean loading) {
+        this.adapter = adapter;
+        this.context = context;
+        this.loading = loading;
+    }
+
     @Override
     protected ArrayList<Book> doInBackground(String... params) {
-        String data = Http.get(this.context, SERVER_URL + "/api/books/?format=json");
+        loading = true;
+
+        String url;
+        if (params.length > 0){
+            url = params[0];
+        }else {
+            url = SERVER_URL + "/api/books/?format=json";
+        }
+
+        String data = Http.get(this.context, url);
+
         Log.i(TAG, "doInBackground: " + data);
 
 
@@ -45,6 +62,12 @@ public class GetListBooksTask extends AsyncTask<String, Void, ArrayList<Book>> {
             topLevel = new JSONObject(data);
 
             JSONArray results = topLevel.getJSONArray("results");
+
+            // Save the next page link
+            String nextLink = topLevel.getString("next");
+            if (nextLink != null) {
+                Http.setPref(context, "next", nextLink);
+            }
 
             Book book = null;
 
@@ -65,6 +88,7 @@ public class GetListBooksTask extends AsyncTask<String, Void, ArrayList<Book>> {
 
     @Override
     protected void onPostExecute(ArrayList<Book> books) {
+        this.loading = false;
         this.adapter.swap(books);
     }
 }
