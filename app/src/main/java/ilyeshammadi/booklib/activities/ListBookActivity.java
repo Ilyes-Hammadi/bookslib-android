@@ -351,14 +351,11 @@ public class ListBookActivity extends AppCompatActivity {
                 // Parse Json
                 JSONObject root = new JSONObject(data);
 
-                String userName = root.getString("username");
-                String email = root.getString("email");
-                String imageUrl = root.getString("image");
+                User user = User.fromJson(root);
 
+                image = Utils.drawableFromUrl(user.getImageUrl());
 
-                image = Utils.drawableFromUrl(imageUrl);
-
-                return new User(userName, email, imageUrl);
+                return user;
 
 
             } catch (JSONException | IOException e) {
