@@ -44,7 +44,6 @@ import java.util.Objects;
 
 import ilyeshammadi.booklib.R;
 import ilyeshammadi.booklib.adapters.ListBookAdapter;
-import ilyeshammadi.booklib.asyntasks.GetListBooksTask;
 import ilyeshammadi.booklib.models.Book;
 import ilyeshammadi.booklib.models.User;
 import ilyeshammadi.booklib.utils.Http;
@@ -71,6 +70,7 @@ public class ListBookActivity extends AppCompatActivity {
     Boolean loading = false;
     int pastVisiblesItems, visibleItemCount, totalItemCount;
     private RelativeLayout mNoInternetIcon;
+    private RelativeLayout mProgeressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +87,7 @@ public class ListBookActivity extends AppCompatActivity {
         // Get the views
         mListBooksRL = (RecyclerView) findViewById(R.id.list_books);
         mNoInternetIcon = (RelativeLayout) findViewById(R.id.no_internet_icon);
+        mProgeressBar = (RelativeLayout) findViewById(R.id.progressBar);
 
 
         setupLoggedinUserDrawer();
@@ -180,6 +181,17 @@ public class ListBookActivity extends AppCompatActivity {
         mListBooksRL.setVisibility(View.VISIBLE);
         mNoInternetIcon.setVisibility(View.GONE);
     }
+
+    private void showProgressBar() {
+        mProgeressBar.setVisibility(View.VISIBLE);
+        mListBooksRL.setVisibility(View.GONE);
+    }
+
+    private void hideProgressBar() {
+        mProgeressBar.setVisibility(View.GONE);
+        mListBooksRL.setVisibility(View.VISIBLE);
+    }
+
 
     private void showSnackbar() {
         hideListAndShowIcon();
@@ -300,7 +312,7 @@ public class ListBookActivity extends AppCompatActivity {
     }
 
 
-    public class SearchTask extends AsyncTask<String, Void, ArrayList<String>> {
+    private class SearchTask extends AsyncTask<String, Void, ArrayList<String>> {
 
         @Override
         protected void onPreExecute() {
@@ -369,7 +381,7 @@ public class ListBookActivity extends AppCompatActivity {
     }
 
 
-    public class GetUserDataTask extends AsyncTask<String, Void, User> {
+    private class GetUserDataTask extends AsyncTask<String, Void, User> {
 
         private Context context;
         Bitmap image;
@@ -464,4 +476,81 @@ public class ListBookActivity extends AppCompatActivity {
         }
     }
 
+    private class GetListBooksTask extends AsyncTask<String, Void, ArrayList<Book>> {
+
+        private ListBookAdapter adapter;
+        private Context context;
+        private ArrayList<Book> booksList = new ArrayList<>();
+        private Boolean loading = true;
+
+        public GetListBooksTask(Context context, ListBookAdapter adapter) {
+            this.adapter = adapter;
+            this.context = context;
+        }
+
+        public GetListBooksTask( Context context, ListBookAdapter adapter, boolean loading) {
+            this.adapter = adapter;
+            this.context = context;
+            this.loading = loading;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProgressBar();
+        }
+
+        @Override
+        protected ArrayList<Book> doInBackground(String... params) {
+            loading = true;
+
+            String url;
+            if (params.length > 0){
+                url = params[0];
+            }else {
+                url = SERVER_URL + "/api/books/?format=json";
+            }
+
+            String data = Http.get(this.context, url);
+
+            Log.i(TAG, "doInBackground: " + data);
+
+
+            try {
+                JSONObject topLevel = null;
+
+                topLevel = new JSONObject(data);
+
+                JSONArray results = topLevel.getJSONArray("results");
+
+                // Save the next page link
+                String nextLink = topLevel.getString("next");
+                if (nextLink != null) {
+                    Http.setPref(context, "next", nextLink);
+                }
+
+                Book book = null;
+
+                for (int i = 0; i < results.length(); i++) {
+                    JSONObject bookNode = (JSONObject) results.get(i);
+                    book = Book.fromJson(bookNode);
+                    booksList.add(book);
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            return booksList;
+        }
+
+
+        @Override
+        protected void onPostExecute(ArrayList<Book> books) {
+            hideProgressBar();
+            this.loading = false;
+            this.adapter.swap(books);
+        }
+    }
 }
