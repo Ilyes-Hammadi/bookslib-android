@@ -15,4 +15,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <RelativeLayout
+        android:id="@+id/no_internet_icon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:src="@drawable/ic_signal_wifi_off_black_24dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
 </LinearLayout>

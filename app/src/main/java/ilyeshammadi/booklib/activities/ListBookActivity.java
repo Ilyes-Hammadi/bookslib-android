@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -68,6 +70,7 @@ public class ListBookActivity extends AppCompatActivity {
 
     Boolean loading = false;
     int pastVisiblesItems, visibleItemCount, totalItemCount;
+    private RelativeLayout mNoInternetIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,51 +86,8 @@ public class ListBookActivity extends AppCompatActivity {
 
         // Get the views
         mListBooksRL = (RecyclerView) findViewById(R.id.list_books);
-        final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        mListBooksRL.setLayoutManager(mLayoutManager);
-        mListBooksRL.setItemAnimator(new DefaultItemAnimator());
+        mNoInternetIcon = (RelativeLayout) findViewById(R.id.no_internet_icon);
 
-        mAdapter = new ListBookAdapter(this, mBooks);
-        mListBooksRL.setAdapter(mAdapter);
-
-
-
-
-        mListBooksRL.addOnScrollListener(new RecyclerView.OnScrollListener()
-        {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-
-
-
-                if(dy > 0) {
-                    visibleItemCount = mLayoutManager.getChildCount();
-                    totalItemCount = mLayoutManager.getItemCount();
-                    pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
-
-
-                    if (!loading) {
-                        if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                            Log.v("...", "Last Item Wow !");
-                            //Do pagination.. i.e. fetch new data
-                            Toast.makeText(ListBookActivity.this, "New Data is Loading", Toast.LENGTH_SHORT).show();
-
-                            // Get the next page link
-                            String nextLink = Http.getPref(getApplicationContext(), "next");
-
-                            if (nextLink != null) {
-                                // Get data from server
-                                new GetListBooksTask(getApplicationContext(), mAdapter, loading).execute(nextLink);
-                            }
-
-                        }
-                    }
-                }
-            }
-        });
-
-        // Get data from server
-        new GetListBooksTask(getApplicationContext(), mAdapter).execute();
 
         setupLoggedinUserDrawer();
 
@@ -187,6 +147,101 @@ public class ListBookActivity extends AppCompatActivity {
                 mSearchView.setQuery((String) mSearchAdapter.getItem(position), false);
             }
         });
+
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(Http.isConnectingToInternet(this)) {
+            initRecycleViewLis();
+        } else {
+            showSnackbar();
+        }
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!Http.isConnectingToInternet(this)) {
+            showSnackbar();
+        }
+    }
+
+    private void hideListAndShowIcon() {
+        mListBooksRL.setVisibility(View.GONE);
+        mNoInternetIcon.setVisibility(View.VISIBLE);
+    }
+
+    private void showListAndHideIcon() {
+        mListBooksRL.setVisibility(View.VISIBLE);
+        mNoInternetIcon.setVisibility(View.GONE);
+    }
+
+    private void showSnackbar() {
+        hideListAndShowIcon();
+        Snackbar.make(mListBooksRL, "No internet connection", Snackbar.LENGTH_INDEFINITE).setAction("Go online", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onStart();
+            }
+        }).show();
+    }
+
+    private void initRecycleViewLis() {
+
+        // Show the list
+        showListAndHideIcon();
+
+        final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        mListBooksRL.setLayoutManager(mLayoutManager);
+        mListBooksRL.setItemAnimator(new DefaultItemAnimator());
+
+        mAdapter = new ListBookAdapter(this, mBooks);
+        mListBooksRL.setAdapter(mAdapter);
+
+
+
+
+        mListBooksRL.addOnScrollListener(new RecyclerView.OnScrollListener()
+        {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+
+
+                if(dy > 0) {
+                    visibleItemCount = mLayoutManager.getChildCount();
+                    totalItemCount = mLayoutManager.getItemCount();
+                    pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
+
+
+                    if (!loading) {
+                        if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                            Log.v("...", "Last Item Wow !");
+                            //Do pagination.. i.e. fetch new data
+                            Toast.makeText(ListBookActivity.this, "New Data is Loading", Toast.LENGTH_SHORT).show();
+
+                            // Get the next page link
+                            String nextLink = Http.getPref(getApplicationContext(), "next");
+
+                            if (nextLink != null) {
+                                // Get data from server
+                                new GetListBooksTask(getApplicationContext(), mAdapter, loading).execute(nextLink);
+                            }
+
+                        }
+                    }
+                }
+            }
+        });
+
+        // Get first chunk of data from the server
+        new GetListBooksTask(getApplicationContext(), mAdapter).execute();
+
 
     }
 
