@@ -7,9 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import ilyeshammadi.booklib.R;
 import ilyeshammadi.booklib.models.Comment;
 
@@ -25,10 +28,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView username;
         public TextView text;
+        public CircleImageView userImageIV;
 
         public MyViewHolder(View view) {
             super(view);
             username = (TextView) view.findViewById(R.id.username);
+            userImageIV = (CircleImageView) view.findViewById(R.id.user_image_iv);
             text = (TextView) view.findViewById(R.id.content);
         }
     }
@@ -52,6 +57,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
         final Comment comment = comments.get(position);
 
         holder.username.setText(comment.getUser().getUsername());
+
+        // Set the user image
+        Picasso.with(context).load(comment.getUser().getImageUrl()).into(holder.userImageIV);
 
         holder.text.setText(comment.getContent());
 
