@@ -10,7 +10,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,10 +25,15 @@ import com.roughike.bottombar.OnTabReselectListener;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import ilyeshammadi.booklib.R;
+import ilyeshammadi.booklib.adapters.ListBookAdapter;
+import ilyeshammadi.booklib.adapters.SimilarBooksAdapter;
 import ilyeshammadi.booklib.models.Book;
 import ilyeshammadi.booklib.utils.Http;
 
@@ -38,6 +47,9 @@ public class BookDetailActivity extends AppCompatActivity {
     private ImageView mBookThumbnail;
     private String pdfUrl;
     private Book mBook;
+
+    private RecyclerView mSimilarBooksRV;
+    private SimilarBooksAdapter mSimilarAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,9 +108,17 @@ public class BookDetailActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
+    private void setupSimilarBooksRecycleView() {
+        mSimilarBooksRV = (RecyclerView) findViewById(R.id.similar_books_rv);
+        final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+        mSimilarBooksRV.setLayoutManager(mLayoutManager);
+        mSimilarBooksRV.setItemAnimator(new DefaultItemAnimator());
+
+        mSimilarAdapter = new SimilarBooksAdapter(this, new ArrayList<Book>());
+        mSimilarBooksRV.setAdapter(mSimilarAdapter);
+    }
 
     private class GetBookTask extends AsyncTask<Integer, Void, Book> {
 
@@ -132,8 +152,56 @@ public class BookDetailActivity extends AppCompatActivity {
 
             pdfUrl = book.getLinkToPdf();
 
+            // Get similar books
+            new GetSimilarBooksTask().execute(mBook.getId());
+
         }
     }
 
+    private class GetSimilarBooksTask extends AsyncTask<Integer, Void, ArrayList<Book>> {
+
+        @Override
+        protected ArrayList<Book> doInBackground(Integer... params) {
+
+            int bookId = params[0];
+
+            String data = Http.get(getApplicationContext(), SERVER_URL + "/api/book/similar/?book_id=" + String.valueOf(bookId));
+            ArrayList<Book> books = new ArrayList<>();
+
+            try {
+
+                JSONObject rootNode = new JSONObject(data);
+
+                JSONArray results = rootNode.getJSONArray("results");
+
+                for (int i = 0; i < results.length(); i++) {
+
+                    JSONObject bookNode = (JSONObject) results.get(i);
+
+                    books.add(Book.fromJson(bookNode));
+                }
+
+                return books;
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Book> books) {
+
+            for (int i = 0; i < books.size(); i++) {
+                Log.i("GOGO", "onPostExecute: " + books.get(i).getName());
+            }
+
+            // Setup similar books recycle view
+            setupSimilarBooksRecycleView();
+
+            mSimilarAdapter.swap(books);
+        }
+    }
 
 }
