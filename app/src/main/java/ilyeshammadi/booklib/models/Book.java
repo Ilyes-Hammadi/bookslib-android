@@ -21,6 +21,7 @@ import static ilyeshammadi.booklib.utils.Constants.TAG;
 public class Book {
     private int id;
     private String name;
+    private String author;
     private String description;
     private String slug;
     private String thumbnail_url;
@@ -93,6 +94,21 @@ public class Book {
     public Book(int id, String name, String description, String slug, String thumbnail_url, String linkToPdf, int commentsCount, int likesCount, boolean isLiked, boolean isBookmarked, ArrayList<Comment> comments) {
         this.id = id;
         this.name = name;
+        this.description = description;
+        this.slug = slug;
+        this.thumbnail_url = thumbnail_url;
+        this.linkToPdf = linkToPdf;
+        this.commentsCount = commentsCount;
+        this.likesCount = likesCount;
+        this.isLiked = isLiked;
+        this.isBookmarked = isBookmarked;
+        this.comments = comments;
+    }
+
+    public Book(int id, String name, String author, String description, String slug, String thumbnail_url, String linkToPdf, int commentsCount, int likesCount, boolean isLiked, boolean isBookmarked, ArrayList<Comment> comments) {
+        this.id = id;
+        this.name = name;
+        this.author = author;
         this.description = description;
         this.slug = slug;
         this.thumbnail_url = thumbnail_url;
@@ -212,6 +228,13 @@ public class Book {
         isBookmarked = bookmarked;
     }
 
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 
     public ArrayList<Comment> getComments() {
         return comments;
@@ -239,6 +262,7 @@ public class Book {
             int id = bookNode.getInt("id");
             String slug = bookNode.getString("slug");
             String name = bookNode.getString("name");
+            String author = bookNode.getString("author");
             String description = bookNode.getString("description");
             String thumbnail = bookNode.getString("get_thulbnail");
             String linkToPdf = bookNode.getString("link_to_pdf");
@@ -253,7 +277,7 @@ public class Book {
             Log.i(TAG, "fromJson: isBookmarked: " + isBookmarked);
 
 
-            Book book = new Book(id, name, description, slug, thumbnail, linkToPdf,commentsCount, likesCount, isLiked, isBookmarked, comments);
+            Book book = new Book(id, name, author,description, slug, thumbnail, linkToPdf,commentsCount, likesCount, isLiked, isBookmarked, comments);
 
             Log.i(TAG, "fromJson: get isLiked: " + book.getIsLiked());
             Log.i(TAG, "fromJson: get isBookmarked: " + book.getIsBookmarked());

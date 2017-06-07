@@ -17,6 +17,14 @@
 
 
         <TextView
+            android:id="@+id/book_author_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="italic"
+            android:textSize="14sp"
+            android:layout_marginLeft="16dp"/>
+
+        <TextView
             android:id="@+id/book_description_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

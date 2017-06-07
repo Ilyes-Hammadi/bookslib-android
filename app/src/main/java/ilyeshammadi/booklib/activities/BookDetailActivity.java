@@ -42,7 +42,7 @@ import static ilyeshammadi.booklib.utils.Constants.SERVER_URL;
 public class BookDetailActivity extends AppCompatActivity {
     private ActionBar mActionBar;
 
-    private TextView mBookTitle;
+    private TextView mBookAuthor;
     private TextView mBookDescription;
     private ImageView mBookThumbnail;
     private String pdfUrl;
@@ -70,6 +70,7 @@ public class BookDetailActivity extends AppCompatActivity {
         mActionBar = getSupportActionBar();
 
         // Get all the views
+        mBookAuthor = (TextView) findViewById(R.id.book_author_tv);
         mBookDescription = (TextView) findViewById(R.id.book_description_tv);
         mBookThumbnail = (ImageView) findViewById(R.id.book_thumbnail_iv);
 
@@ -148,6 +149,11 @@ public class BookDetailActivity extends AppCompatActivity {
             // Set data into the views
             book.getThumbnail_urlL();
             Picasso.with(BookDetailActivity.this).load(book.getThumbnail_urlL()).into(mBookThumbnail);
+
+            // Set the author name
+            mBookAuthor.setText("By " + book.getAuthor());
+
+            // Set description
             mBookDescription.setText(book.getDescription());
 
             pdfUrl = book.getLinkToPdf();

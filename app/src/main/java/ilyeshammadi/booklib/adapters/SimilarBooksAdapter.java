@@ -58,8 +58,8 @@ public class SimilarBooksAdapter extends RecyclerView.Adapter<SimilarBooksAdapte
         final Book book = books.get(position);
 
         // Set the name
-        if(book.getName().length() > 20) {
-            String name = (book.getName().substring(0, 19)) + "...";
+        if(book.getName().length() > 15) {
+            String name = (book.getName().substring(0, 14)) + "...";
             holder.name.setText(name);
         } else {
             holder.name.setText(book.getName());

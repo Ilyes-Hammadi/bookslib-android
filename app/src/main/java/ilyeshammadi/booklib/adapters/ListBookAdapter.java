@@ -38,7 +38,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public CardView cardContaier;
-        public TextView name, description, commentCounter, likesCounter;
+        public TextView name, author,description, commentCounter, likesCounter;
         public ImageView thumbnail;
         public ImageButton likeBtn, bookmarkBtn;
 
@@ -47,6 +47,7 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
             super(view);
             cardContaier = (CardView) view.findViewById(R.id.book_card_container);
             name = (TextView) view.findViewById(R.id.name_tv);
+            author = (TextView) view.findViewById(R.id.author_tv);
             description = (TextView) view.findViewById(R.id.description_tv);
             thumbnail = (ImageView) view.findViewById(R.id.book_thumbnail_iv);
             commentCounter = (TextView) view.findViewById(R.id.comment_counter_tv);
@@ -77,6 +78,9 @@ public class ListBookAdapter extends RecyclerView.Adapter<ListBookAdapter.MyView
 
         // Set the book name
         holder.name.setText(book.getName());
+
+        // Set author name
+        holder.author.setText(book.getAuthor());
 
         // Set the book description
         // If desc is longer then 120 chars then cut it
