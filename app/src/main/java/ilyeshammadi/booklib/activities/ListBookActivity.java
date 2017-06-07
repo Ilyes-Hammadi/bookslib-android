@@ -155,8 +155,12 @@ public class ListBookActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        Log.i("GOGO", "onStart: ");
         if(Http.isConnectingToInternet(this)) {
-            initRecycleViewLis();
+            // If there are no data
+            if (mBooks.size() == 0) {
+                initRecycleViewLis();
+            }
         } else {
             showSnackbar();
         }
@@ -167,6 +171,7 @@ public class ListBookActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.i("GOGO", "onResume: ");
         if(!Http.isConnectingToInternet(this)) {
             showSnackbar();
         }
